@@ -2,11 +2,17 @@
 
 namespace App\Filament\Resources\Guests\Tables;
 
+use App\Imports\GuestImport;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GuestsTable
 {
@@ -43,6 +49,35 @@ class GuestsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
+                Action::make('import')
+                    ->label('Import guests')
+                    ->icon('heroicon-o-arrow-up-tray')
+                    ->schema([
+                        FileUpload::make('file')
+                            ->label('Excel file')
+                            ->acceptedFileTypes([
+                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            ])
+                            ->required()
+                            ->disk('local')
+                            ->directory('imports'),
+                    ])
+                    ->action(function (array $data) {
+                        $path = Storage::disk('local')->path($data['file']);
+
+                        Excel::import(
+                            new GuestImport,
+                            $path
+                        );
+
+                        Storage::disk('local')->delete($data['file']);
+
+                        Notification::make()
+                            ->title('Guests imported successfully')
+                            ->success()
+                            ->send();
+                    }),
+
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
