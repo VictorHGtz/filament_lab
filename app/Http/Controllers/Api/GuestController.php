@@ -25,6 +25,7 @@ class GuestController extends Controller
             'guest_name' => $guest->guest_name,
             'max_guests' => $guest->max_guests,
             'confirmed_guests' => $guest->confirmed_guests ?? 0,
+            'confirmed' => !is_null($guest->confirmed_at),
         ]);
     }
 
@@ -47,13 +48,19 @@ class GuestController extends Controller
             ],
         ]);
 
+        if ($guest->confirmed_at) {
+            return response()->json([
+                'message' => 'La confirmación ya fue registrada.',
+            ], 409);
+        }
+
         $guest->update([
             'confirmed_guests' => $validated['confirmed_guests'],
             'confirmed_at' => now(),
         ]);
 
         return response()->json([
-            'message' => 'RSVP confirmed successfully.',
+            'message' => 'Se registró su asistencia.',
             'guest_name' => $guest->guest_name,
             'max_guests' => $guest->max_guests,
             'confirmed_guests' => $guest->confirmed_guests,
