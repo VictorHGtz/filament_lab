@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Js;
 use Maatwebsite\Excel\Facades\Excel;
 
 class GuestsTable
@@ -52,17 +53,20 @@ class GuestsTable
                     ->label('Link')
                     ->icon('heroicon-o-clipboard-document')
                     ->color('gray')
-                    ->extraAttributes(fn (Guest $record) => [
-                        'x-on:click.stop.prevent' => "
-                            navigator.clipboard.writeText('https://vickguti.github.io/nayeyvic.github.io/?code=' . $record->guest_code')
-                                .then(() => {
-                                    new FilamentNotification()
-                                        .title('Liga copiada')
-                                        .success()
-                                        .send()
-                                })
-                        ",
-                    ]),
+                    ->extraAttributes(function (Guest $record) {
+                        $url = url('/?code=' . $record->guest_code);
+                        return [
+                            'x-on:click.stop.prevent' => "
+                                navigator.clipboard.writeText(" . Js::from($url) . ")
+                                    .then(() => {
+                                        new FilamentNotification()
+                                            .title('Liga copiada')
+                                            .success()
+                                            .send()
+                                    })
+                            ",
+                        ];
+                    })
             ])
             ->toolbarActions([
                 Action::make('import')
