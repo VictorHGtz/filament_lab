@@ -54,7 +54,7 @@ class GuestsTable
                     ->icon('heroicon-o-clipboard-document')
                     ->color('gray')
                     ->extraAttributes(function (Guest $record) {
-                        $url = url('/?code=' . $record->guest_code);
+                        $url = 'https://vickguti.github.io/nayeyvic.github.io/?code=' . $record->guest_code;
                         return [
                             'x-on:click.stop.prevent' => "
                                 navigator.clipboard.writeText(" . Js::from($url) . ")
