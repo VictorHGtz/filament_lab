@@ -13,6 +13,7 @@ class Guest extends Model
         'guest_code',
         'guest_name',
         'max_guests',
+        'message',
         'confirmed_guests',
         'confirmed_at',
     ];

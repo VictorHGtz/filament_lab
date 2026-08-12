@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Guests\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -22,6 +23,7 @@ class GuestForm
                 TextInput::make('confirmed_guests')
                     ->numeric(),
                 DateTimePicker::make('confirmed_at'),
+                Textarea::make('message')->disabled()->columnSpanFull(),
             ]);
     }
 }

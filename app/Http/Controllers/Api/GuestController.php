@@ -57,6 +57,7 @@ class GuestController extends Controller
         $guest->update([
             'confirmed_guests' => $validated['confirmed_guests'],
             'confirmed_at' => now(),
+            'message' => $request->message_guests
         ]);
 
         return response()->json([
