@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Guests\Tables;
 
 use App\Imports\GuestImport;
+use App\Models\Guest;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -47,6 +48,21 @@ class GuestsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('copyInvitation')
+                    ->label('Link')
+                    ->icon('heroicon-o-clipboard-document')
+                    ->color('gray')
+                    ->extraAttributes(fn (Guest $record) => [
+                        'x-on:click.stop.prevent' => "
+                            navigator.clipboard.writeText('https://vickguti.github.io/nayeyvic.github.io/?code=' . $record->guest_code')
+                                .then(() => {
+                                    new FilamentNotification()
+                                        .title('Liga copiada')
+                                        .success()
+                                        .send()
+                                })
+                        ",
+                    ]),
             ])
             ->toolbarActions([
                 Action::make('import')
